@@ -11,6 +11,8 @@ int sideLength; // SLOT_SIZE * nSlot
 int ix; // (width - sideLength)/2
 int iy; // (height - sideLength)/2
 
+int slotOpened;
+
 // game state
 final int GAME_START = 1;
 final int GAME_RUN = 2;
@@ -38,7 +40,6 @@ void setup(){
 
   nSlot = 4;
   totalSlots = nSlot*nSlot;
-  // 初始化二維陣列
   slot = new int[nSlot][nSlot];
   
   sideLength = SLOT_SIZE * nSlot;
@@ -67,7 +68,9 @@ void draw(){
           break;
     case GAME_RUN:
           //---------------- put you code here ----
-
+if( slotOpened == totalSlots - bombCount ){
+      gameState = GAME_WIN;
+    }
           // -----------------------------------
           break;
     case GAME_WIN:
@@ -85,8 +88,22 @@ void draw(){
 
 int countNeighborBombs(int col,int row){
   // -------------- Requirement B ---------
-  return 0;
+  int count = 0;
+  
+  for (int i = 0 ; i < nSlot ; i++){
+    for (int j = 0 ; j < nSlot ; j++){
+      if( i + 1 == col || i - 1 == col || i == col ){
+        if( j + 1 == row || j - 1 == row || j == row ){
+          if( slot[i][j] == SLOT_BOMB )
+            count++;
+        }
+      }
+    }
+  }
+  
+  return count;
 }
+
 
 void setBombs(){
   // initial slot
@@ -98,8 +115,21 @@ void setBombs(){
   // -------------- put your code here ---------
   // randomly set bombs
 
-  // ---------------------------------------
+int i = 0;
+  
+  while( i < bombCount ){
+    int col = (int)random(4);
+    int row = (int)random(4);
+    if( slot[col][row] != SLOT_BOMB ){
+      slot[col][row] = SLOT_BOMB;
+      i++;
+    }
+  }
 }
+
+
+
+  // ---------------------------------------
 
 void drawEmptySlots(){
   background(180);
@@ -174,11 +204,26 @@ void mousePressed(){
        mouseY >= iy && mouseY <= iy+sideLength){
     
     // --------------- put you code here -------     
+int x = ( mouseX - ix ) / SLOT_SIZE;
+    int y = ( mouseY - iy ) / SLOT_SIZE;
+
+      if( slot[x][y] == SLOT_BOMB ){
+        showSlot(x,y,SLOT_DEAD);
+        slot[x][y] = SLOT_DEAD;
+        gameState = GAME_LOSE;
+      }
+      else if( slot[x][y] == SLOT_OFF ){
+        showSlot(x,y,SLOT_SAFE);
+        slot[x][y] = SLOT_SAFE;
+        slotOpened++;
+      }
+    }
+}
+
+
 
     // -------------------------
     
-  }
-}
 
 // press enter to start
 void keyPressed(){
