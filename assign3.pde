@@ -10,8 +10,7 @@ final int SLOT_SIZE = 100; //每格大小
 int sideLength; // SLOT_SIZE * nSlot
 int ix; // (width - sideLength)/2
 int iy; // (height - sideLength)/2
-
-int slotOpened;
+int slotOpen;
 
 // game state
 final int GAME_START = 1;
@@ -68,7 +67,7 @@ void draw(){
           break;
     case GAME_RUN:
           //---------------- put you code here ----
-if( slotOpened == totalSlots - bombCount ){
+if( slotOpen == totalSlots - bombCount ){
       gameState = GAME_WIN;
     }
           // -----------------------------------
@@ -215,16 +214,12 @@ int x = int(( mouseX - ix ) / SLOT_SIZE);
       else if( slot[x][y] == SLOT_OFF ){
         showSlot(x,y,SLOT_SAFE);
         slot[x][y] = SLOT_SAFE;
-        slotOpened++;
+        slotOpen++;
       }
     }
 }
 
-
-
     // -------------------------
-    
-
 // press enter to start
 void keyPressed(){
   if(key==ENTER && (gameState == GAME_WIN || 
